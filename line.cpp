@@ -24,7 +24,7 @@ Line::Line(QPoint startPoint, QPoint endPoint) {
 /*中点画线算法实现*/
 void Line::draw(QPen &pen, QPixmap &Pix){
     //qDebug()<<"My draw";
-
+    qDebug() <<"draw line:"<<startPoint<<" "<<endPoint;
     //变量声明与初始化
     int x0 = 0,y0 = 0,x1 = 0,y1 = 0;
     int a = 0,b = 0,c = 0,d = 0;
