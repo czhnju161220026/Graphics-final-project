@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -22,6 +25,10 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
+  <property name="styleSheet">
+   <string notr="true">font: 11pt &quot;Adobe 仿宋 Std R&quot;;
+</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
@@ -37,6 +44,9 @@
       <width>201</width>
       <height>51</height>
      </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>PushButton</string>
@@ -57,6 +67,9 @@
       <height>51</height>
      </size>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="text">
      <string>PushButton</string>
     </property>
@@ -76,6 +89,9 @@
       <height>51</height>
      </size>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="text">
      <string>PushButton</string>
     </property>
@@ -87,7 +103,7 @@
      <x>0</x>
      <y>0</y>
      <width>678</width>
-     <height>28</height>
+     <height>29</height>
     </rect>
    </property>
   </widget>

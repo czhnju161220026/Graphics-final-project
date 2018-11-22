@@ -26,152 +26,131 @@ void Line::draw(QPen &pen, QPixmap &Pix){
     //qDebug()<<"My draw";
     qDebug() <<"draw line:"<<startPoint<<" "<<endPoint;
     //变量声明与初始化
-    int x0 = 0,y0 = 0,x1 = 0,y1 = 0;
-    int a = 0,b = 0,c = 0,d = 0;
-    int delta0 = 0,delta1 = 0;
-    double delta_X = startPoint.x() - endPoint.x();
-    double delta_Y = startPoint.y() - endPoint.y();
-    double m = 0;
-    if(delta_X == 0){
-        //斜率不存在时，特殊处理
-        //将这种情况归属到斜率大于1的中去
-        m = MAX;
+   // QPainter painter(&Pix);
+   // painter.setPen(pen);
+   // painter.drawLine(startPoint,endPoint);
+    double deltaX = startPoint.x()-endPoint.x();
+    double deltaY = startPoint.y()-endPoint.y();
+    double k;
+    if(deltaX==0) {
+        k = MAX;
     }
     else {
-        //计算斜率
-        m = delta_Y/delta_X;
+        k = deltaY/deltaX;
     }
 
-    /*斜率的绝对值不大于1，x为增量*/
-    if(abs(m) <= 1) {
-        if(startPoint.x() < endPoint.x()) {
-            x0 = startPoint.x();
-            y0 = startPoint.y();
-            x1 = endPoint.x();
-            y1 = endPoint.y();
-        }
-        else{
-            x1 = startPoint.x();
-            y1 = startPoint.y();
-            x0 = endPoint.x();
-            y0 = endPoint.y();
-        }
-        //计算a,b,c
-        a = y0 - y1;
-        b = x1 - x0;
-        c = x0 * y1 - x1 * y0;
-
-        if(m > 0) {
-            //0<m<=1的情况
-            d = 2 * a + b;
-            delta0 = 2 * a;
-            delta1 = 2 * (a + b);
-
-            int x = x0;
-            int y = y0;
-            //painter.drawPoint(x0,y0);
+    if(abs(k)<1) {
+        if(deltaX*deltaY>0) {  //case 1 : 0<k<1
+            int x0,x1,y0,y1;
+            if(startPoint.x()<endPoint.x()) {
+                x0 = startPoint.x();
+                x1 = endPoint.x();
+                y0 = startPoint.y();
+                y1 = endPoint.y();
+            }
+            else {
+                x0 = endPoint.x();
+                y0 = endPoint.y();
+                x1 = startPoint.x();
+                y1 = startPoint.y();
+            }
+            int a = y0-y1,b=x1-x0,c=x0*y1-x1*y0;
+            int x=x0,y=y0;
             setPixel(x,y,pen,Pix);
-            while(x < x1) {
-                if(d >=0){
-                    x ++;
-                    d+=delta0;
+            while(x<=x1) {
+                if(2*a*x+2*a+2*b*y+b+2*c<0) {
+                    x++;
+                    y++;
                 }
                 else {
                     x++;
-                    y++;
-                    d+=delta1;
                 }
-                //painter.drawPoint(x,y);
                 setPixel(x,y,pen,Pix);
             }
-
         }
-        //-1<=m<0
-        else {
-            d = 2 * a - b;
-            delta0 = 2 * a;
-            delta1 = 2 * (a - b);
-            int x = x0;
-            int y = y0;
-            //painter.drawPoint(x0,y0);
+        else {   //case 2: -1<k<0
+            int x0,x1,y0,y1;
+            if(startPoint.x()<endPoint.x()) {
+                x0 = startPoint.x();
+                x1 = endPoint.x();
+                y0 = startPoint.y();
+                y1 = endPoint.y();
+            }
+            else {
+                x0 = endPoint.x();
+                y0 = endPoint.y();
+                x1 = startPoint.x();
+                y1 = startPoint.y();
+            }
+            int a = y0-y1,b=x1-x0,c=x0*y1-x1*y0;
+            int x=x0,y=y0;
             setPixel(x,y,pen,Pix);
-            while(x < x1) {
-                if(d <= 0) {
+            while(x<=x1) {
+                if(2*a*x+2*a+2*b*y-b+2*c<0) {
                     x++;
-                    d += delta0;
                 }
-                else{
+                else {
                     x++;
                     y--;
-                    d += delta1;
                 }
-                //painter.drawPoint(x,y);
                 setPixel(x,y,pen,Pix);
             }
         }
-
     }
-    else{
-        if(startPoint.y() < endPoint.y()) {
-            x0 = startPoint.x();
-            y0 = startPoint.y();
-            x1 = endPoint.x();
-            y1 = endPoint.y();
-        }
-        else{
-            x1 = startPoint.x();
-            y1 = startPoint.y();
-            x0 = endPoint.x();
-            y0 = endPoint.y();
-        }
-        a = y0 - y1;
-        b = x1 - x0;
-        c = x0 * y1 - x1 * y0;
-        //m>1
-        if(m > 0) {
-            d = 2 * b + a;
-            delta0 = 2 * b;
-            delta1 = 2 * (a + b);
-            int x = x0;
-            int y = y0;
-            //painter.drawPoint(x0,y0);
+    else {
+        if(deltaX*deltaY>0) {
+            int x0,x1,y0,y1;
+            if(startPoint.y()<endPoint.y()) {
+                y0 = startPoint.y();
+                x0 = startPoint.x();
+                y1 = endPoint.y();
+                x1 = endPoint.x();
+            }
+            else {
+                y0 = endPoint.y();
+                x0 = endPoint.x();
+                y1 = startPoint.y();
+                x1 = startPoint.x();
+            }
+            int a = y0-y1,b=x1-x0,c=x0*y1-x1*y0;
+            int x=x0,y=y0;
             setPixel(x,y,pen,Pix);
-
-            while(y < y1) {
-                if(d <= 0) {
+            while(y<=y1) {
+                if(2*b*y+2*b+2*a*x+a+2*c<0) {
                     y++;
-                    d+=delta0;
                 }
                 else {
                     x++;
                     y++;
-                    d+=delta1;
                 }
-                //painter.drawPoint(x,y);
                 setPixel(x,y,pen,Pix);
             }
         }
-        //m<-1
         else {
-            d = 2 * b -a;
-            delta0 = 2 * b;
-            delta1 = 2 * (b - a);
-            int x = x0;
-            int y = y0;
-            //painter.drawPoint(x0,y0);
+            int x0,x1,y0,y1;
+            if(startPoint.y()<endPoint.y()) {
+                y0 = startPoint.y();
+                x0 = startPoint.x();
+                y1 = endPoint.y();
+                x1 = endPoint.x();
+            }
+            else {
+                y0 = endPoint.y();
+                x0 = endPoint.x();
+                y1 = startPoint.y();
+                x1 = startPoint.x();
+            }
+            int a = y0-y1,b=x1-x0,c=x0*y1-x1*y0;
+            int x=x0,y=y0;
             setPixel(x,y,pen,Pix);
-
-            while(y < y1) {
-                if(d >= 0) {
-                    y ++;
-                    d+=delta0;
+            while(y<=y1) {
+                if(2*b*y+2*b+2*a*x-a+2*c<0) {
+                    y++;
+                    x--;
                 }
                 else {
-                    x--;
                     y++;
-                    d+=delta1;
                 }
-                //painter.drawPoint(x,y);
                 setPixel(x,y,pen,Pix);
             }
         }

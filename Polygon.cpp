@@ -30,9 +30,6 @@ void Polygon::addNextPoint(QPoint point,QPen& pen, QPixmap& Pix) {
         qDebug()<<"draw"<<points[points.size()-2]<<","<<points[points.size()-1];
         Line* newLine = new Line(points[points.size()-2],points[points.size()-1]);
         newLine->draw(pen,Pix);
-        QPainter painter(&Pix);
-        painter.setPen(pen);
-        painter.drawLine(points[points.size()-2],points[points.size()-1]);
     }
     else {
         QPainter painter(&Pix);

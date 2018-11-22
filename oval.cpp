@@ -194,6 +194,21 @@ void Oval::move(int delta_x, int delta_y) {
 
 void Oval::addRotateDegrees(int degrees) {
     rotateDegrees = (rotateDegrees+degrees)%360;
+    double rad = ((double)rotateDegrees * 3.14159265358) / 180;
+    double COS = cos(rad);
+    double SIN = sin(rad);
+    int xr = center.x();
+    int yr = center.y();
+    if(rotateDegrees==90||rotateDegrees==270) {
+        int x1,x2,x3,x4;
+        int y1,y2,y3,y4;
+        x1 = auxilaryPoints[0].x();x2 = auxilaryPoints[1].x();x3 = auxilaryPoints[2].x();x4 = auxilaryPoints[3].x();
+        y1 = auxilaryPoints[0].y();y2 = auxilaryPoints[1].y();y3 = auxilaryPoints[2].y();y4 = auxilaryPoints[3].y();
+        auxilaryPoints[0].setX(xr+(y1-yr));auxilaryPoints[0].setY(yr+(x1-xr));
+        auxilaryPoints[1].setX(xr+(y2-yr));auxilaryPoints[1].setY(yr+(x2-xr));
+        auxilaryPoints[2].setX(xr+(y3-yr));auxilaryPoints[2].setY(yr+(x3-xr));
+        auxilaryPoints[3].setX(xr+(y4-yr));auxilaryPoints[3].setY(yr+(x4-xr));
+    }
 }
 
 void Oval::zoom(double ratio) {
@@ -209,73 +224,46 @@ void Oval::zoom(double ratio) {
 }
 
 void Oval::moveAuxilaryPoint(int index, int delta_x, int delta_y) {
-    if(rotateDegrees%180 ==0) {
-        if(index == 0) {
-            a-=(delta_x/2);
-            b-=(delta_y/2);
-            auxilaryPoints[0].setX(auxilaryPoints[0].x()+delta_x);
-            auxilaryPoints[0].setY(auxilaryPoints[0].y()+delta_y);
-        }
-        if(index==1) {
-            a+=(delta_x/2);
-            b-=(delta_y/2);
-            auxilaryPoints[1].setX(auxilaryPoints[1].x()+delta_x);
-            auxilaryPoints[1].setY(auxilaryPoints[1].y()+delta_y);
-        }
-        if(index ==2) {
-            a+=(delta_x/2);
-            b+=(delta_y/2);
-            auxilaryPoints[2].setX(auxilaryPoints[2].x()+delta_x);
-            auxilaryPoints[2].setY(auxilaryPoints[2].y()+delta_y);
-        }
-        if(index==3) {
-            a-=(delta_x/2);
-            b+=(delta_y/2);
-            auxilaryPoints[3].setX(auxilaryPoints[3].x()+delta_x);
-            auxilaryPoints[3].setY(auxilaryPoints[3].y()+delta_y);
-        }
-    }
-
-    else {
-        if(index == 0) {
-            a-=(delta_x/2);
-            b-=(delta_y/2);
-            auxilaryPoints[0].setX(auxilaryPoints[0].x()+delta_x);
-            auxilaryPoints[0].setY(auxilaryPoints[0].y()+delta_y);
-        }
-        if(index==1) {
-            a+=(delta_x/2);
-            b-=(delta_y/2);
-            auxilaryPoints[1].setX(auxilaryPoints[1].x()+delta_x);
-            auxilaryPoints[1].setY(auxilaryPoints[1].y()+delta_y);
-        }
-        if(index ==2) {
-            a+=(delta_x/2);
-            b+=(delta_y/2);
-            auxilaryPoints[2].setX(auxilaryPoints[2].x()+delta_x);
-            auxilaryPoints[2].setY(auxilaryPoints[2].y()+delta_y);
-        }
-        if(index==3) {
-            a-=(delta_x/2);
-            b+=(delta_y/2);
-            auxilaryPoints[3].setX(auxilaryPoints[3].x()+delta_x);
-            auxilaryPoints[3].setY(auxilaryPoints[3].y()+delta_y);
-        }
-    }
-
-    center.setX(center.x()+delta_x/2);
-    center.setY(center.y()+delta_y/2);
     if(index==0||index==2) {
+        auxilaryPoints[index].setX(auxilaryPoints[index].x()+delta_x);
+        auxilaryPoints[index].setY(auxilaryPoints[index].y()+delta_y);
         auxilaryPoints[1].setX(auxilaryPoints[2].x());
         auxilaryPoints[1].setY(auxilaryPoints[0].y());
         auxilaryPoints[3].setX(auxilaryPoints[0].x());
         auxilaryPoints[3].setY(auxilaryPoints[2].y());
     }
     else {
+        auxilaryPoints[index].setX(auxilaryPoints[index].x()+delta_x);
+        auxilaryPoints[index].setY(auxilaryPoints[index].y()+delta_y);
         auxilaryPoints[0].setX(auxilaryPoints[3].x());
         auxilaryPoints[0].setY(auxilaryPoints[1].y());
         auxilaryPoints[2].setX(auxilaryPoints[1].x());
         auxilaryPoints[2].setY(auxilaryPoints[3].y());
+    }
+    center.setX((auxilaryPoints[0].x()+auxilaryPoints[2].x())/2);
+    center.setY((auxilaryPoints[0].y()+auxilaryPoints[2].y())/2);
+    int deltaX = abs(auxilaryPoints[0].x()-auxilaryPoints[1].x());
+    int deltaY = abs(auxilaryPoints[0].y()-auxilaryPoints[3].y());
+    if(deltaX>deltaY) {
+        a = deltaX/2;
+        b = deltaY/2;
+    }
+    else {
+        a = deltaY/2;
+        b = deltaX/2;
+    }
+
+    if(deltaX>deltaY&&in_x) {
+        rotateDegrees = 0;
+    }
+    else if(deltaX>deltaY&&!in_x) {
+        rotateDegrees = 90;
+    }
+    else if(deltaX<=deltaY&&in_x) {
+        rotateDegrees = 90;
+    }
+    else {
+        rotateDegrees = 0;
     }
 }
 
