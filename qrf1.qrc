@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="circle">images/circle.png</file>
+        <file alias="curve">images/curve.png</file>
+        <file alias="line">images/line.png</file>
+        <file alias="oval">images/oval.png</file>
+        <file alias="rec">images/rec.png</file>
+        <file alias="save">images/save.jpeg</file>
+        <file alias="question">images/question.jpeg</file>
+        <file alias="color">images/color.jpeg</file>
+        <file alias="cancle">images/cancle.png</file>
+        <file alias="restore">images/restore.png</file>
+        <file alias="edit">images/edit.jpeg</file>
+        <file alias="rubber">images/rubber.png</file>
+        <file alias="rubber_cursor">images/rubber_cursor.png</file>
+        <file alias="attribute">images/attribute.png</file>
+        <file alias="brush">images/brush.jpeg</file>
+        <file alias="brush_cursor">images/brush_cursor.jpeg</file>
+        <file alias="filling">images/filling.jpg</file>
+        <file alias="polygon">images/polygon.png</file>
+        <file alias="cut">images/cut.jpg</file>
+    </qresource>
+</RCC>
