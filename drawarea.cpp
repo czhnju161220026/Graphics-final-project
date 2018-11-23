@@ -28,6 +28,7 @@ DrawArea::DrawArea(QWidget *parent) :
     //设置画布的宽高
     Pix = QPixmap(1530,800);
     Pix.fill(Qt::white);    //填充为白色
+    Pix.scaled(this->width(),this->height());
     Pix_index = 0;
     PixQueue.push_back(Pix); //储存最初的画布
     inkColor.setRgb(0,0,0); //设置墨水颜色，默认为黑色
@@ -79,12 +80,23 @@ DrawArea::~DrawArea()
 /*装载图片*/
 void DrawArea::loadImage(QString path) {
     QImage image(path);
-    image.scaled(this->width(),this->height());
-    Pix = QPixmap::fromImage(image);
+    Pix = QPixmap(1530,800);
+    Pix.fill(Qt::white);    //填充为白色
     Pix.scaled(this->width(),this->height());
+    int width = this->width();
+    int height = this->height();
+    if(image.width()>width) {
+        image = image.scaled(width,image.height()*width/image.width());
+    }
+
+    if(image.height()>height) {
+        image = image.scaled(image.width()*height/image.height(),height);
+    }
+    QPainter painter(&Pix);
+    painter.drawImage(0,0,image);
+    update();
     PixQueue.pop_back();
     PixQueue.push_back(Pix); //储存最初的画布
-
 }
 /*保存图片*/
 bool DrawArea::saveImage() {
