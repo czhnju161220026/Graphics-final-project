@@ -766,6 +766,8 @@ void DrawArea::use_Rubber(bool flag) {
 void DrawArea::use_Brush(bool flag) {
     if(flag){
         isUsingBrush = true;
+        lastPoint = QPoint(0,0);
+        endPoint = QPoint(0,0);
         if(currentShape!=NULL) {
             hideAuxilaryPoints();
         }
