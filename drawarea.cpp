@@ -105,7 +105,7 @@ bool DrawArea::saveImage() {
     QString filePath = qfileDialog.getSaveFileName(
                 this,
                 tr("Save File"),
-                "MyPainterProject.jpg",
+                "D:\\MyPainterProject.jpg",
                 tr("JPG(*.jpg)") //默认以jpg保存
                );
     //异常处理

@@ -13,6 +13,15 @@
     <height>420</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Microsoft YaHei UI</family>
+    <pointsize>11</pointsize>
+    <weight>50</weight>
+    <italic>false</italic>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="mouseTracking">
    <bool>true</bool>
   </property>
@@ -26,7 +35,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 11pt &quot;Adobe 仿宋 Std R&quot;;
+   <string notr="true">
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -103,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>678</width>
-     <height>29</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

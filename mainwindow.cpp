@@ -44,7 +44,7 @@ void MainWindow::openFile() {
     QString filePath = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
-                ".",
+                "D:\\",
                 tr("Image (*.jpg *.png *.jpeg)")
                );
 
