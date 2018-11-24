@@ -24,7 +24,7 @@ public:
 private:
     Ui::MainWindow *ui;
     void newPainter(); //开启新项目
-    void openPainter(); //打开已有的图片作为项目
+    //void openPainter(); //打开已有的图片作为项目
     void openFile();    //打开文件
 };
 
