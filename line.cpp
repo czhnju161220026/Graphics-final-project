@@ -276,7 +276,202 @@ void Line::verticalFilp() {
 }
 //裁剪函数，如果返回false，直接删除该直线
 //如果返回true，根据裁剪结果进行重绘
+//使用Cohen-sutherland裁剪算法
 bool Line::cut(QPoint point1, QPoint point2) {
     qDebug() <<"cut by"<<point1<<point2;
+    int xmin,xmax,ymin,ymax;
+    if(point1.x()>point2.x()) {
+        xmin = point2.x();
+        xmax = point1.x();
+    }
+    else {
+        xmin = point1.x();
+        xmax = point2.x();
+    }
+    if(point1.y()>point2.y()) {
+        ymin = point2.y();
+        ymax = point1.y();
+    }
+    else {
+        ymin = point1.y();
+        ymax = point2.y();
+    }
+
+    int areaCode1=0,areaCode2=0;
+    int x1 = startPoint.x(),y1=startPoint.y();
+    int x2 = endPoint.x(),y2=endPoint.y();
+    int a = y2-y1,b=x1-x2,c=x2*y1-x1*y2;
+    areaCode1 = setAreaCode(x1,y1,xmin,xmax,ymin,ymax);
+    areaCode2 = setAreaCode(x2,y2,xmin,xmax,ymin,ymax);
+    //return false;
+    qDebug()<<"code1:"<<areaCode1;
+    qDebug()<<"code2:"<<areaCode2;
+    if((areaCode1&areaCode2)!=0) {
+        //完全不在区域内
+        qDebug()<<"不在区域内";
+        return false;
+    }
+    if(areaCode1==0&&areaCode2==0) {
+        //完全在区域内
+        return true;
+    }
+    //否则进行求交运算,直到裁剪出的线段完全落在区域内部，或判断出其不在区域内
+    //依次比较四条边界
+    //左边界
+    int flag1 = areaCode1&1;
+    int flag2 = areaCode2&1;
+    qDebug() << "falg1="<<flag1<<",flag2="<<flag2;
+    bool isDone = false;
+    bool res = false;
+    if(flag1==1) { //起始点在左边界外侧
+        x1 = xmin;
+        y1 = (-c-a*x1)/b;
+        areaCode1 = setAreaCode(x1,y1,xmin,xmax,ymin,ymax);
+        qDebug()<<"left Cutting:"<<areaCode1;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+    if(flag2==1) {
+        x2 = xmin;
+        y2 = (-c-a*x2)/b;
+        areaCode2 = setAreaCode(x2,y2,xmin,xmax,ymin,ymax);
+        qDebug()<<"left Cutting:"<<areaCode2;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+    /*右边界*/
+    flag1=(areaCode1&0x2)/2;
+    flag2=(areaCode2&0x2)/2;
+    qDebug() << "falg1="<<flag1<<",flag2="<<flag2;
+    if(flag1==1) {
+        x1 = xmax;
+        y1 = (-c-a*x1)/b;
+        areaCode1 = setAreaCode(x1,y1,xmin,xmax,ymin,ymax);
+        qDebug()<<"right Cutting:"<<areaCode1;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+    if(flag2==1) {
+        x2 = xmax;
+        y2 = (-c-a*x2)/b;
+        areaCode2 = setAreaCode(x2,y2,xmin,xmax,ymin,ymax);
+        qDebug()<<"right Cutting:"<<areaCode2;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+    //上边界
+    flag1 = (areaCode1&0x4)/4;
+    flag2 = (areaCode2&0x4)/4;
+    qDebug() << "falg1="<<flag1<<",flag2="<<flag2;
+    if(flag1==1) {
+        y1 = ymin;
+        x1 = (-c-b*y1)/a;
+        areaCode1 = setAreaCode(x1,y1,xmin,xmax,ymin,ymax);
+        qDebug()<<"upper Cutting:"<<areaCode1;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+    if(flag2==1) {
+        y2 = ymin;
+        x2 = (-c-b*y2)/a;
+        areaCode2 = setAreaCode(x2,y2,xmin,xmax,ymin,ymax);
+        qDebug()<<"upper Cutting:"<<areaCode2;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+
+    //下边界
+    flag1 = (areaCode1&0x8)/8;
+    flag2 = (areaCode2&0x8)/8;
+    qDebug() << "falg1="<<flag1<<",flag2="<<flag2;
+    if(flag1==1) {
+        y1 = ymax;
+        x1 = (-c-b*y1)/a;
+        areaCode1 = setAreaCode(x1,y1,xmin,xmax,ymin,ymax);
+        qDebug()<<"bottom Cutting:"<<areaCode1;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+    if(flag2==1){
+        y2 = ymax;
+        x2 = (-c-b*y2)/a;
+        areaCode2 = setAreaCode(x2,y2,xmin,xmax,ymin,ymax);
+        qDebug()<<"bottom Cutting:"<<areaCode2;
+        res=judgeAreaCode(areaCode1,areaCode2,isDone);
+        if(isDone) {
+            startPoint.setX(x1);startPoint.setY(y1);
+            endPoint.setX(x2);endPoint.setY(y2);
+            auxilaryPoints[0]=startPoint;auxilaryPoints[1]=endPoint;
+            return res;
+        }
+    }
+
     return false;
+}
+
+int Line::setAreaCode(int x, int y, int xmin, int xmax, int ymin, int ymax) {
+    int areaCode = 0;
+    if(x<xmin) {
+        areaCode|=1;
+    }
+    else if(x>xmax) {
+        areaCode|=2;
+    }
+
+    if(y<ymin) {
+        areaCode|=4;
+    }
+    else if(y>ymax) {
+        areaCode|=8;
+    }
+
+    return areaCode;
+}
+
+bool Line::judgeAreaCode(int areaCode1, int areaCode2,bool& success) {
+    if(areaCode1==0&&areaCode2==0) {
+        success = true;
+        return true;
+    }
+    if((areaCode1&areaCode2)!=0) {
+        //完全不在区域内
+        success = true;
+        return false;
+    }
+    return true;
 }

@@ -229,16 +229,28 @@ void DrawArea::paintEvent(QPaintEvent *) {
         //show cutArea and edge
     }
 
+    //裁剪直线功能
     if(isCuttingLine&&isReleased&&!isDraggingArea) {
         assert(currentShape!=NULL);
         assert(currentShape->getAttribute()==LINE);
         if(currentShape->cut(pressPoint,releasePoint)) {
             //repaint the line
             qDebug() <<"直线裁剪重绘";
+            QPixmap oldPix = PixQueue[Pix_index-1];
+            //在底图上绘制平移后的样子
+            currentShape->draw(pen,oldPix);
+            currentShape->showAuxilaryPoints(oldPix);
+            //直接更新画板，并不需要保存
+            PixQueue[Pix_index] = oldPix;
+            Pix = oldPix;
         }
         else {
             //delete the line
             qDebug()<<"删除直线";
+            cancleOperation();
+            PixQueue.pop_back();
+            delete currentShape;
+            currentShape=NULL;
         }
     }
 
@@ -259,6 +271,7 @@ void DrawArea::paintEvent(QPaintEvent *) {
         }
         if(isCuttingLine) {
             isCuttingLine = false;
+            setCursor(Qt::ArrowCursor);
             qDebug() << "quit Cutting Line";
         }
         isReleased = false; //鼠标已经松开
@@ -279,7 +292,7 @@ void DrawArea::mousePressEvent(QMouseEvent *event) {
         pressPoint = event->pos();
         lastPoint = event->pos();
         //是否进行选择辅助点或拖动
-        if(currentShape!=NULL) {
+        if(currentShape!=NULL&&!isCuttingLine) {
             auxilaryPointIndex = currentShape->inAuxilaryPoint(pressPoint.x(),pressPoint.y());
             if(auxilaryPointIndex!=-1) {
                 qDebug() <<"Using auxilartPointIndex: "<<auxilaryPointIndex;
@@ -341,7 +354,7 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event) {
     QPoint temp = currentPos;
     currentPos = event->pos();
     sendPos();
-    if(currentShape!=NULL) {
+    if(currentShape!=NULL&&!isCuttingLine) {
         int index = currentShape->inAuxilaryPoint(event->pos().x(),event->pos().y());
         if(index!=-1) {
             setCursor(Qt::SizeAllCursor);
@@ -359,7 +372,7 @@ void DrawArea::mouseMoveEvent(QMouseEvent *event) {
         }
     }
 
-    if(cutArea!=NULL) {
+    if(cutArea!=NULL&&!isCuttingLine) {
         if(cutArea->inDraggingArea(event->pos().x(),event->pos().y())) {
             setCursor(Qt::OpenHandCursor);
             setToolTip("左键按住可以拖动，右键可以进行变换操作");
@@ -1045,5 +1058,6 @@ void DrawArea::deleteCutArea() {
 void DrawArea::cut_Line() {
     qDebug()<<"is cutting line";
     isCuttingLine = true;
+    setCursor(Qt::CrossCursor);
     emit quitFunctionSignal();
 }

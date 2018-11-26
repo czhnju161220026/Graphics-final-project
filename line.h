@@ -14,7 +14,9 @@ private:
     QPoint startPoint; //起始位置
     QPoint endPoint;   //结束位置
     QPoint center; //spin
-     void setPixel(int x,int y,QPen& pen, QPixmap& Pix);
+    void setPixel(int x,int y,QPen& pen, QPixmap& Pix);
+    int setAreaCode(int x, int y, int xmin, int xmax,int ymin,int ymax);
+    bool judgeAreaCode(int areaCode1, int areaCode2,bool& success);
 public:
     Line();
     Line(QPoint startPoint,QPoint endPoint);  
