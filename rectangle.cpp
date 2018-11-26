@@ -186,6 +186,10 @@ int rectangle::inAuxilaryPoint(int x, int y) {
     }
 }
 void rectangle::horizontalFilp() {
+    if(rotateDegrees%90==0) {
+        //do nothing
+        return;
+    }
     if(rotateDegrees<=90) {
         addRotateDegrees(180-2*rotateDegrees);
     }
@@ -201,6 +205,10 @@ void rectangle::horizontalFilp() {
 }
 
 void rectangle::verticalFilp() {
+    if(rotateDegrees%90==0) {
+        //do nothing
+        return;
+    }
     if(rotateDegrees<=90) {
         addRotateDegrees(720-2*rotateDegrees);
     }

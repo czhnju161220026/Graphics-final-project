@@ -91,6 +91,7 @@ private:
     bool isUsingBrush;
     bool isFilling;
     bool isCuttingArea;
+    bool isCuttingLine;
     bool isDrawingLine;
     bool isDrawingCircle;
     bool isDrawingRectangle;
@@ -119,10 +120,12 @@ private:
     void hideAuxilaryPoints();                      //隐藏辅助点
     void fixCutArea();                              //固定裁剪区域
     void deleteCutArea();                           //删除所选区域
+    void cut_Line();                                //开启直线裁剪，只有当前图元为直线才有可能用到
     void TODO();
 signals:
     void postionChange(const QPoint& pos); //信号：鼠标移动，坐标改变
     void unsavedChange(const bool& flag);  //信号：产生了未保存的改动
+    void quitFunctionSignal();             //让paintProject退出所有功能
 };
 
 #endif // DRAWAREA_H

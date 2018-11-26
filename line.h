@@ -27,6 +27,7 @@ public:
     void moveAuxilaryPoint(int index, int delta_x, int delta_y);
     void horizontalFilp();
     void verticalFilp();
+    bool cut(QPoint point1, QPoint point2);
 };
 
 #endif // LINE_H

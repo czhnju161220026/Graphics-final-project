@@ -72,3 +72,7 @@ void Shape::horizontalFilp() {
 void Shape::verticalFilp() {
     ;
 }
+
+bool Shape::cut(QPoint point1, QPoint point2) {
+    return false;
+}

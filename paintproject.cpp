@@ -170,7 +170,7 @@ PaintProject::PaintProject(QWidget *parent) :
 
     connect(drawArea,&DrawArea::postionChange,this,&PaintProject::displayPosInStatusBar);
     connect(drawArea,&DrawArea::unsavedChange,this,&PaintProject::setDirty);
-
+    connect(drawArea,&DrawArea::quitFunctionSignal,this,&PaintProject::quitAllFunctions);
 }
 
 PaintProject::~PaintProject()

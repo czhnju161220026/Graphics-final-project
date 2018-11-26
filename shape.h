@@ -35,6 +35,9 @@ public:
     virtual bool isFinished();
     virtual void addNextPoint(QPoint point, QPen& pen,QPixmap& Pix);
     virtual void finish(QPen& pen,QPixmap& Pix);
+
+    //虚函数，直线裁剪
+    virtual bool cut(QPoint point1,QPoint point2);
 };
 
 #endif // SHAPE_H

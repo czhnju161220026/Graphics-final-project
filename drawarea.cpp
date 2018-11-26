@@ -15,6 +15,7 @@
 #include "Polygon.h"
 #include "filling.h"
 #include <cmath>
+#include "assert.h"
 
 /*构造函数*/
 DrawArea::DrawArea(QWidget *parent) :
@@ -48,6 +49,7 @@ DrawArea::DrawArea(QWidget *parent) :
     isUsingBrush = false;
     isFilling = false;
     isCuttingArea = false;
+    isCuttingLine = false;
     isDrawingLine = false;
     isDrawingCircle = false;
     isDrawingRectangle = false;
@@ -226,6 +228,20 @@ void DrawArea::paintEvent(QPaintEvent *) {
         //TODO
         //show cutArea and edge
     }
+
+    if(isCuttingLine&&isReleased&&!isDraggingArea) {
+        assert(currentShape!=NULL);
+        assert(currentShape->getAttribute()==LINE);
+        if(currentShape->cut(pressPoint,releasePoint)) {
+            //repaint the line
+            qDebug() <<"直线裁剪重绘";
+        }
+        else {
+            //delete the line
+            qDebug()<<"删除直线";
+        }
+    }
+
     //鼠标松起，如果正在拖动，退出拖动;如果正在编辑，退出编辑
     if(isReleased) {
         if(isDraggingShape) {
@@ -241,8 +257,13 @@ void DrawArea::paintEvent(QPaintEvent *) {
             isDraggingArea = false;
             qDebug() << "quit Dragging";
         }
+        if(isCuttingLine) {
+            isCuttingLine = false;
+            qDebug() << "quit Cutting Line";
+        }
         isReleased = false; //鼠标已经松开
     }
+
     QPainter Painter(this);
     Painter.drawPixmap(0,0,this->width(),this->height(),Pix);
     if(isCuttingArea&&cutArea!=NULL) {
@@ -490,6 +511,7 @@ void DrawArea::contextMenuEvent(QContextMenuEvent *event) {
             QAction* zoom;
             QAction* horizontal_flip;
             QAction* vertical_flip;
+            QAction* cutLine;
 
             rotate_90_degree = new QAction(tr("顺时针旋转90度..."),this);
             rotate_90_degree->setStatusTip("顺时针旋转90度...");
@@ -519,6 +541,10 @@ void DrawArea::contextMenuEvent(QContextMenuEvent *event) {
             vertical_flip->setStatusTip("垂直翻转...");
             connect(vertical_flip,&QAction::triggered,this,&DrawArea::verticalFilp);
 
+            cutLine = new QAction("裁剪直线",this);
+            cutLine->setStatusTip("使用鼠标裁剪直线图元...");
+            connect(cutLine,&QAction::triggered,this,&DrawArea::cut_Line);
+
 
             contex.addAction(rotate_90_degree);
             contex.addAction(rotate_180_degree);
@@ -527,6 +553,9 @@ void DrawArea::contextMenuEvent(QContextMenuEvent *event) {
             contex.addAction(zoom);
             contex.addAction(horizontal_flip);
             contex.addAction(vertical_flip);
+            if(currentShape->getAttribute()==LINE) {
+                contex.addAction(cutLine);
+            }
             QPoint pos = QCursor::pos();
             pos.setX(pos.x()+1);
             pos.setY(pos.y()+1);
@@ -1010,4 +1039,11 @@ void DrawArea::deleteCutArea() {
     cutArea = NULL;
     update();
     addToPixQueue();
+}
+
+//进入裁剪直线模式
+void DrawArea::cut_Line() {
+    qDebug()<<"is cutting line";
+    isCuttingLine = true;
+    emit quitFunctionSignal();
 }

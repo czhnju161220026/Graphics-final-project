@@ -199,7 +199,7 @@ void Oval::addRotateDegrees(int degrees) {
     double SIN = sin(rad);
     int xr = center.x();
     int yr = center.y();
-    if(rotateDegrees==90||rotateDegrees==270) {
+    if(rotateDegrees%90==0) {
         int x1,x2,x3,x4;
         int y1,y2,y3,y4;
         x1 = auxilaryPoints[0].x();x2 = auxilaryPoints[1].x();x3 = auxilaryPoints[2].x();x4 = auxilaryPoints[3].x();
@@ -283,6 +283,10 @@ int Oval::inAuxilaryPoint(int x, int y) {
 }
 
 void Oval::horizontalFilp() {
+    if(rotateDegrees%90==0) {
+        //do nothing
+        return;
+    }
     if(rotateDegrees<=90) {
         addRotateDegrees(180-2*rotateDegrees);
     }
@@ -298,6 +302,10 @@ void Oval::horizontalFilp() {
 }
 
 void Oval::verticalFilp() {
+    if(rotateDegrees%90==0) {
+        //do nothing
+        return;
+    }
     if(rotateDegrees<=90) {
         addRotateDegrees(720-2*rotateDegrees);
     }

@@ -163,8 +163,10 @@ bool Line::inDraggingArea(int x, int y) {
     xmax = endPoint.x();
     ymin = startPoint.y();
     ymax = endPoint.y();
-
-    if((x-xmin)*(x-xmax)<=0 && (y-ymin)*(y-ymax)<=0) {
+    /*如果点到直线的距离小于30，就认为在拖动区域*/
+    int a = ymin-ymax,b=xmax-xmin,c=xmin*ymax-xmax*ymin;
+    double distance = (double)abs(a*x+b*y+c)/pow((double)(a*a+b*b),0.5);
+    if(distance<=30) {
         return true;
     }
     return false;
@@ -271,4 +273,10 @@ void Line::verticalFilp() {
     center.setY(yr);
     auxilaryPoints[0] = startPoint;
     auxilaryPoints[1] = endPoint;
+}
+//裁剪函数，如果返回false，直接删除该直线
+//如果返回true，根据裁剪结果进行重绘
+bool Line::cut(QPoint point1, QPoint point2) {
+    qDebug() <<"cut by"<<point1<<point2;
+    return false;
 }
