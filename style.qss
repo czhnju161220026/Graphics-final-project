@@ -521,42 +521,7 @@ QSpinBox {
         border: 1px solid rgb(111, 156, 207);
         background: white;
 }
-QSpinBox:enabled {
-        color: rgb(60, 60, 60);
-}
-QSpinBox:enabled:hover, QSpinBox:enabled:focus {
-        color: rgb(51, 51, 51);
-}
-QSpinBox:!enabled {
-        color: rgb(210, 210, 210);
-        background: transparent;
-}
-QSpinBox::up-button {
-        border-left: 1px solid rgb(111, 156, 207);
-        width: 18px;
-        height: 12px;
-        border-top-right-radius: 4px;
-        image: url(:/White/upButton);
-}
-QSpinBox::up-button:!enabled {
-        background: transparent;
-}
-QSpinBox::up-button:enabled:hover {
-        background: rgb(255, 255, 255, 30);
-}
-QSpinBox::down-button {
-        border-left: 1px solid rgb(111, 156, 207);
-        width: 18px;
-        height: 12px;
-        border-bottom-right-radius: 4px;
-        image: url(:/White/downButton);
-}
-QSpinBox::down-button:!enabled {
-        background: transparent;
-}
-QSpinBox::down-button:hover {
-        background: rgb(255, 255, 255, 30);
-}
+
 
 /**********标签**********/
 QLabel#grayLabel {

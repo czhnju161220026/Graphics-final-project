@@ -13,7 +13,7 @@ penAttribute::penAttribute(QWidget *parent,int Width,int Style,int Size) :
     ui->radioButton_2->setText("虚线");
     ui->radioButton_3->setText("点");
     ui->horizontalSlider->setRange(1,10);
-    ui->spinBox->setRange(1,10);
+    ui->spinBox->setRange(2,10);
     ui->spinBox_2->setRange(1,50);
     ui->horizontalSlider_2->setRange(1,50);
     connect(ui->horizontalSlider,&QSlider::valueChanged,ui->spinBox,&QSpinBox::setValue);
