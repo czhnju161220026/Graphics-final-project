@@ -52,7 +52,8 @@ PaintProject::PaintProject(QWidget *parent) :
     drawCurve = new QAction(QIcon(":/images/curve"),tr("绘制曲线..."),myToolbar);
     drawCurve->setStatusTip(tr("绘制曲线..."));
     drawCurve->setToolTip(tr("绘制曲线..."));
-    connect(drawCurve,&QAction::triggered,this,&PaintProject::TODO);
+    drawCurve->setCheckable(true);
+    connect(drawCurve,&QAction::triggered,this,&PaintProject::draw_Curve);
     myToolbar->addAction(drawCurve);
 
     drawCircle = new QAction(QIcon(":/images/circle"),tr("绘制圆..."),myToolbar);
@@ -166,6 +167,7 @@ PaintProject::PaintProject(QWidget *parent) :
     isDrawingRectangle = false;
     isDrawingOval = false;
     isDrawingPolygon = false;
+    isDrawingCurve = false;
     isCuttingArea = false;
 
     connect(drawArea,&DrawArea::postionChange,this,&PaintProject::displayPosInStatusBar);
@@ -378,6 +380,19 @@ void PaintProject::draw_Polygon() {
     }
 }
 
+//绘制曲线模式
+void PaintProject::draw_Curve() {
+    if(!isDrawingCurve) {
+        quitAllFunctions();
+        drawArea->draw_Curve(true);
+        isDrawingCurve = true;
+    }
+    else {
+        drawArea->draw_Curve(false);
+        isDrawingCurve = false;
+    }
+}
+
 //让画板开启或退出橡皮模式
 void PaintProject::use_Rubber() {
     if(!isUsingRubber) {
@@ -441,6 +456,7 @@ void PaintProject::quitAllFunctions() {
     if(isDrawingOval) drawOval->trigger();
     if(isDrawingPolygon) drawPolygon->trigger();
     if(isCuttingArea) cutArea->trigger();
+    if(isDrawingCurve) drawCurve->trigger();
 }
 //展示鼠标位置
 void PaintProject::displayPosInStatusBar(QPoint pos) {

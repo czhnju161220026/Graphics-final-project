@@ -40,7 +40,8 @@ SOURCES += \
     penAttribute.cpp \
     Polygon.cpp \
     rectangle.cpp \
-    shape.cpp
+    shape.cpp \
+    Curve.cpp
 
 HEADERS += \
     circle.h \
@@ -59,7 +60,8 @@ HEADERS += \
     penAttribute.h \
     Polygon.h \
     rectangle.h \
-    shape.h
+    shape.h \
+    Curve.h
 
 FORMS += \
     drawarea.ui \

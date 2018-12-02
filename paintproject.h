@@ -35,6 +35,7 @@ public:
     void draw_Rec();                             //绘制矩形功能
     void draw_Oval();                            //绘制椭圆功能
     void draw_Polygon();                         //绘制多边形
+    void draw_Curve();                           //绘制曲线
     void use_Rubber();                           //使用橡皮擦
     void use_Brush();                            //使用画刷
     void use_Filling();                          //使用填充空白区域功能
@@ -66,6 +67,7 @@ private:
     bool isDrawingRectangle;
     bool isDrawingOval;
     bool isDrawingPolygon;
+    bool isDrawingCurve;
     bool isCuttingArea;
     void setDirty(bool flag);           //修改dirty变量
 

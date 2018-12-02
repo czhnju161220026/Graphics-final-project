@@ -13,6 +13,7 @@
 #include "rectangle.h"
 #include "oval.h"
 #include "Polygon.h"
+#include "Curve.h"
 #include "filling.h"
 #include <cmath>
 #include "assert.h"
@@ -55,6 +56,7 @@ DrawArea::DrawArea(QWidget *parent) :
     isDrawingRectangle = false;
     isDrawingOval = false;
     isDrawPolygon = false;
+    isDrawCurve = false;
     isReleased = false;
     isDraggingShape = false;
     isDraggingArea = false;
@@ -321,31 +323,64 @@ void DrawArea::mousePressEvent(QMouseEvent *event) {
 
         //如果不在拖拽
         //如果在绘制多边形
-        if(!isDraggingArea&&!isDraggingShape&&!isEditing&&isDrawPolygon) {
+        if(!isDraggingArea&&!isDraggingShape&&!isEditing&&(isDrawPolygon||isDrawCurve)) {
             initPen();
             ////如果是多边形第一个点
-            if(currentShape==NULL||currentShape->getAttribute()!=POLYGON) {
-                if(currentShape!=NULL) {
-                    hideAuxilaryPoints();
-                }
-                Polygon* polygon = new Polygon();
-                polygon->addNextPoint(pressPoint,pen,Pix);
-                currentShape = polygon;
-            }
-            else {
-                if(currentShape->isFinished()) {
-                    hideAuxilaryPoints();
-                    Polygon* polygon = new Polygon();
-                    polygon->addNextPoint(pressPoint,pen,Pix);
-                    currentShape = polygon;
-                }
-                ////如果不是多边形第一个点
-                else {
-                   qDebug() << "old poly";
-                   currentShape->addNextPoint(pressPoint,pen,Pix);
-                }
-            }
-            update();
+           if(isDrawPolygon) {
+               if(currentShape==NULL||currentShape->getAttribute()!=POLYGON) {
+                   if(currentShape!=NULL) {
+                       hideAuxilaryPoints();
+                   }
+                   Polygon* polygon = new Polygon();
+                   polygon->addNextPoint(pressPoint,pen,Pix);
+                   currentShape = polygon;
+               }
+               else {
+                   if(currentShape->isFinished()) {
+                       hideAuxilaryPoints();
+                       Polygon* polygon = new Polygon();
+                       polygon->addNextPoint(pressPoint,pen,Pix);
+                       currentShape = polygon;
+                   }
+                   ////如果不是多边形第一个点
+                   else {
+                      qDebug() << "old poly";
+                      currentShape->addNextPoint(pressPoint,pen,Pix);
+
+                   }
+               }
+               update();
+           }
+           //如果是曲线的第一个点
+           else if(isDrawCurve) {
+               if(currentShape==NULL||currentShape->getAttribute()!=CURVE) {
+                   if(currentShape!=NULL) {
+                       hideAuxilaryPoints();
+                   }
+                   addToPixQueue();
+                   Curve* curve = new Curve();
+                   curve->addNextPoint(pressPoint,pen,Pix);
+                   currentShape = curve;
+               }
+               else {
+                   if(currentShape->isFinished()) {
+                       hideAuxilaryPoints();
+                       addToPixQueue();
+                       Curve* curve = new Curve();
+                       curve->addNextPoint(pressPoint,pen,Pix);
+                       currentShape = curve;
+                   }
+                   else {
+                       currentShape->addNextPoint(pressPoint,pen,Pix);
+                   }
+               }
+               QPixmap oldPix;
+               oldPix = PixQueue[Pix_index-1];
+               currentShape->draw(pen,oldPix);
+               Pix = oldPix;
+               PixQueue[Pix_index] = Pix;
+               update();
+           }
         }
     }
 }
@@ -487,6 +522,12 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event) {
 //缩放事件，重设画布宽高
 void DrawArea::resizeEvent(QResizeEvent *) {
     qDebug()<<"resize: "<<this->width()<<" "<<this->height();
+    if(currentShape!=NULL&&currentShape->getAttribute()==POLYGON) {
+        currentShape->finish(pen,Pix);
+        update();
+        addToPixQueue();
+        currentShape = NULL;
+    }
     if(cutArea!=NULL) {
         cutArea->fixImage(Pix);
         delete cutArea;
@@ -499,7 +540,6 @@ void DrawArea::resizeEvent(QResizeEvent *) {
     if(currentShape!=NULL) {
         hideAuxilaryPoints();
     }
-    currentShape = NULL;
     update();
 }
 
@@ -513,6 +553,12 @@ void DrawArea::contextMenuEvent(QContextMenuEvent *event) {
             currentShape->showAuxilaryPoints(Pix);
             update();
             addToPixQueue();
+        }
+        else if(isDrawCurve&&currentShape!=NULL&&!currentShape->isFinished()) {
+            currentShape->finish(pen,Pix);
+            currentShape->showAuxilaryPoints(Pix);
+            update();
+            //addToPixQueue();
         }
         else if(currentShape!=NULL&&currentShape->inDraggingArea(event->pos().x(),event->pos().y())) {
             QMenu contex;
@@ -782,6 +828,16 @@ void DrawArea::draw_Polygon(bool flag) {
     }
     else {
         qDebug() <<"quit Polygon";
+    }
+}
+
+void DrawArea::draw_Curve(bool flag) {
+    isDrawCurve = flag;
+    if(flag) {
+        qDebug() <<"draw Curve";
+    }
+    else {
+        qDebug() <<"quit Curve";
     }
 }
 

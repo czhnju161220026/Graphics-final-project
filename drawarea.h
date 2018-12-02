@@ -40,6 +40,7 @@ public:
     void draw_Oval(QPoint center,int a,int b,bool in_x);//重载：通过参数绘制
 
     void draw_Polygon(bool flag);                       //开启\关闭多边形鼠标绘制模式
+    void draw_Curve(bool flag);                         //开启\关闭矩形的鼠标绘制模式
 
     void use_Rubber(bool flag);                         //开启\关闭橡皮使用模式
     void use_Brush(bool flag);                          //开启\关闭画刷使用模式
@@ -97,6 +98,7 @@ private:
     bool isDrawingRectangle;
     bool isDrawingOval;
     bool isDrawPolygon;
+    bool isDrawCurve;
     bool isReleased;
     bool isDraggingShape;
     bool isDraggingArea;

@@ -57,13 +57,9 @@ void Polygon::draw(QPen &pen, QPixmap &Pix) {
     QPainter painter(&Pix);
     painter.setPen(pen);
     for(int i = 0;i<points.size()-1;i++) {
-        /*Line * newLine = new Line(points[i], points[i+1]);
-        newLine->draw(pen,Pix);*/
         painter.drawLine(points[i],points[i+1]);
     }
     painter.drawLine(points[points.size()-1],points[0]);
-    /*Line* newLine = new Line(points[points.size()-1],points[0]);
-    newLine->draw(pen,Pix);*/
 }
 
 bool Polygon::inDraggingArea(int x, int y) {

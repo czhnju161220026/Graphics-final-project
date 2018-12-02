@@ -6,7 +6,7 @@
 #include <QPoint>
 #include <QVector>
 
-enum{SHAPE=0,LINE,CIRCLE,RECTANGLE,OVAL,POLYGON};
+enum{SHAPE=0,LINE,CIRCLE,RECTANGLE,OVAL,POLYGON,CURVE};
 class Shape
 {
 protected:
@@ -27,10 +27,10 @@ public:
     virtual void horizontalFilp();
     virtual void verticalFilp();
     /*
-    *这几个虚函数在多边形类中被重写，用来表示
-    * (1)多边形是否绘制完成，
-    * (2)为多边形添加下一个点，
-    * (3)多边形完成绘制这三个功能
+    *这几个虚函数在多边形类和曲线类中被重写，用来表示
+    * (1)多边形\曲线是否绘制完成，
+    * (2)为多边形\曲线添加下一个点，
+    * (3)多边形\曲线完成绘制这三个功能
     */
     virtual bool isFinished();
     virtual void addNextPoint(QPoint point, QPen& pen,QPixmap& Pix);
