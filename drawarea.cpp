@@ -522,12 +522,6 @@ void DrawArea::mouseReleaseEvent(QMouseEvent *event) {
 //缩放事件，重设画布宽高
 void DrawArea::resizeEvent(QResizeEvent *) {
     qDebug()<<"resize: "<<this->width()<<" "<<this->height();
-    if(currentShape!=NULL&&currentShape->getAttribute()==POLYGON) {
-        currentShape->finish(pen,Pix);
-        update();
-        addToPixQueue();
-        currentShape = NULL;
-    }
     if(cutArea!=NULL) {
         cutArea->fixImage(Pix);
         delete cutArea;
@@ -538,8 +532,22 @@ void DrawArea::resizeEvent(QResizeEvent *) {
     }
     Pix=Pix.scaled(this->width(),this->height());
     if(currentShape!=NULL) {
+        if(isDrawPolygon&&!currentShape->isFinished()) {
+            initPen();
+            currentShape->finish(pen,Pix);
+            currentShape->showAuxilaryPoints(Pix);
+            update();
+            addToPixQueue();
+        }
+        else if(isDrawCurve&&!currentShape->isFinished()) {
+            currentShape->finish(pen,Pix);
+            currentShape->showAuxilaryPoints(Pix);
+            update();
+            //addToPixQueue();
+        }
         hideAuxilaryPoints();
     }
+    currentShape = NULL;
     update();
 }
 

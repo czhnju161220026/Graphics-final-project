@@ -8,17 +8,15 @@
 /*
 * 使用Cardinal样条法生成插值函数
 * 张量参数t=0.5
-* 这种插值法又叫CatMull
+* 又称为Catmull曲线
 */
 
-/*
- * TODO: 在draw中完成对给定控制点的曲线的函数计算与绘制
-*/
 Curve::Curve() {
     attribute = CURVE;
     finished = false;
     rotateDegrees = 0;
     t = 0.5;
+    initMatrix();
     qDebug() << "New Curve";
 }
 
@@ -31,6 +29,7 @@ Curve::Curve(QVector<QPoint> points) {
      finished = true;
      rotateDegrees = 0;
      t = 0.5;
+     initMatrix();
      initConner();
 }
 
@@ -53,14 +52,39 @@ void Curve::draw(QPen &pen, QPixmap &Pix) {
     qDebug() <<"Draw curve";
     QPainter painter(&Pix);
     painter.setPen(pen);
-    for(int i = 0;i<controlPoints.size()-1;i++) {
-        /*Line * newLine = new Line(points[i], points[i+1]);
-        newLine->draw(pen,Pix);*/
-        painter.drawLine(controlPoints[i],controlPoints[i+1]);
-    }
+
     if(controlPoints.size()==1) {
         painter.drawPoint(controlPoints[0]);
+        return;
     }
+/*
+    if(controlPoints.size()<=3) {
+        for(int i = 0;i < controlPoints.size()-1;i++) {
+            painter.drawLine(controlPoints[i],controlPoints[i+1]);
+        }
+        return ;
+    }*/
+
+    //点数大于四，需要进行曲线生成绘制
+    for(int i = 0;i < controlPoints.size()-1;i++) {
+        updateFunction(i);
+        int delta_x = controlPoints[i].x() - controlPoints[i+1].y();
+        int delta_y = controlPoints[i].y() - controlPoints[i+1].y();
+        double length = sqrt(delta_x * delta_x + delta_y * delta_y);
+        float delta_u = 0.5 / length;         //计算U自增的步长
+        QVector<QPoint> points;
+        float u = 0.0;
+        while(u<1.0) {
+            QPoint point(Fx(u),Fy(u));
+            points.push_back(point);
+            u+=delta_u;
+        }
+        points.push_back(QPoint(Fx(1),Fy(1)));
+        for(int j = 0;j < points.size()-1; j++) {
+            painter.drawLine(points[j],points[j+1]);
+        }
+    }
+
 }
 
 void Curve::initConner() {
@@ -185,4 +209,52 @@ void Curve::horizontalFilp() {
         auxilaryPoints[i] = controlPoints[i];
     }
     initConner();
+}
+
+float Curve::Fx(float u) {
+    return Dx + u*(Cx+u*(Bx+u*Ax));
+}
+
+float Curve::Fy(float u) {
+    return Dy + u*(Cy+u*(By+u*Ay));
+}
+void Curve::updateFunction(int index) {
+    QPoint P0 = controlPoints[index];
+    QPoint P1 = controlPoints[index+1];
+    QPoint prev,next;
+    if(index==0) {
+        prev = P0;
+    }
+    else {
+        prev = controlPoints[index-1];
+    }
+
+    if(index == controlPoints.size()-2) {
+        next = P1;
+    }
+    else {
+        next = controlPoints[index+2];
+    }
+
+    //更新函数参数
+    Ax = Matrix[0][0]*prev.x() + Matrix[0][1]*P0.x() + Matrix[0][2]*P1.x() + Matrix[0][3]*next.x();
+    Bx = Matrix[1][0]*prev.x() + Matrix[1][1]*P0.x() + Matrix[1][2]*P1.x() + Matrix[1][3]*next.x();
+    Cx = Matrix[2][0]*prev.x() + Matrix[2][1]*P0.x() + Matrix[2][2]*P1.x() + Matrix[2][3]*next.x();
+    Dx = Matrix[3][0]*prev.x() + Matrix[3][1]*P0.x() + Matrix[3][2]*P1.x() + Matrix[3][3]*next.x();
+
+    Ay = Matrix[0][0]*prev.y() + Matrix[0][1]*P0.y() + Matrix[0][2]*P1.y() + Matrix[0][3]*next.y();
+    By = Matrix[1][0]*prev.y() + Matrix[1][1]*P0.y() + Matrix[1][2]*P1.y() + Matrix[1][3]*next.y();
+    Cy = Matrix[2][0]*prev.y() + Matrix[2][1]*P0.y() + Matrix[2][2]*P1.y() + Matrix[2][3]*next.y();
+    Dy = Matrix[3][0]*prev.y() + Matrix[3][1]*P0.y() + Matrix[3][2]*P1.y() + Matrix[3][3]*next.y();
+
+    qDebug() << "Fx:"<<Ax<<"u^3 + "<<Bx<<"u^2 + "<<Cx<<"u + "<<Dx;
+    qDebug() << "Fy:"<<Ay<<"u^3 + "<<By<<"u^2 + "<<Cy<<"u + "<<Dy;
+}
+
+//初始化Cardinal矩阵
+void Curve::initMatrix() {
+    Matrix[0][0] = -t;Matrix[0][1] = 2 - t; Matrix[0][2] = t - 2; Matrix[0][3] = t;
+    Matrix[1][0] =2*t;Matrix[1][1] = t - 3; Matrix[1][2] = 3-2*t; Matrix[1][3] = -t;
+    Matrix[2][0] = -t;Matrix[2][1] = 0    ; Matrix[2][2] = t    ; Matrix[2][3] = 0;
+    Matrix[3][0] = 0 ;Matrix[3][1] = 1    ; Matrix[3][2] = 0    ; Matrix[3][3] = 0;
 }
