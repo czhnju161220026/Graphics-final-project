@@ -13,6 +13,7 @@ MyGLWidget::MyGLWidget(QWidget *parent):QGLWidget(parent) {
     angle_y = 0.0f;
     lastPoint = QPoint(0,0);
     currentPoint = QPoint(0,0);
+    distance = -4.0;
 }
 
 //初始化GL窗口
@@ -76,7 +77,7 @@ void MyGLWidget::loadOffFile(QString path) {
     }
 }
 
-//重写鼠标按下和移动事件，为了模型的旋转服务
+//重写鼠标按下，移动，滚轮事件，为模型的旋转缩放服务
 void MyGLWidget::mousePressEvent(QMouseEvent *event) {
     if(event->button()==Qt::LeftButton) {
         QPoint pressPoint = event->pos();
@@ -91,13 +92,23 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
+void MyGLWidget::wheelEvent(QWheelEvent *event) {
+    if(event->delta()>0) {
+        distance/=1.05;
+    }
+    else {
+        distance*=1.05;
+    }
+    updateGL();
+}
+
 //绘制函数
 void MyGLWidget::paintGL()                              //从这里开始进行所以的绘制
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //清除屏幕和深度缓存
     glLoadIdentity();                                   //重置当前的模型观察矩阵
 
-    glTranslatef(0.0, 0.0f, -4.0f);                   //坐标系移入屏幕4.0单位
+    glTranslatef(0.0, 0.0f, (GLfloat)distance);                   //坐标系移入屏幕4.0单位
     //glRotatef(angle,0.5f,1.0f,0.0f);
     int delta_x = currentPoint.x() - lastPoint.x();
     int delta_y = currentPoint.y() - lastPoint.y();
@@ -107,7 +118,7 @@ void MyGLWidget::paintGL()                              //从这里开始进行�
     glRotatef(angle_x,1.0f,0.0f,0.0f); //旋转
     glRotatef(angle_y,0.0f,1.0f,0.0f); //旋转
 
-    //glColor3f(0.4f,0.4f,0.4f);
+    //glColor3f(0.6f,0.6f,0.6f);
     //glColor3f(0.7f,0.7f,0.7f); 用以增强效果的两种颜色
 
     //绘制每个面
@@ -116,7 +127,7 @@ void MyGLWidget::paintGL()                              //从这里开始进行�
             glColor3f(0.7f,0.7f,0.7f);
         }
         else {
-            glColor3f(0.4f,0.4f,0.4f);
+            glColor3f(0.6f,0.6f,0.6f);
         }
 
         glBegin(GL_POLYGON);
