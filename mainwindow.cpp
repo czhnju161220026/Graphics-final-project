@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_3->setStatusTip(tr("退出软件(Ctrl + Q)"));
     ui->pushButton_3->setShortcut(QKeySequence(Qt::CTRL+Qt::Key_Q));
     connect(ui->pushButton_3,&QPushButton::clicked,this,&MainWindow::close);
+
+    this->setFixedSize(this->width(),this->height());
 }
 
 MainWindow::~MainWindow()
