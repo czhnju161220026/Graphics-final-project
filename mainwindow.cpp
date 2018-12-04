@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Myglwidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -45,15 +46,25 @@ void MainWindow::openFile() {
                 this,
                 tr("Open File"),
                 "D:\\",
-                tr("Image (*.jpg *.png *.jpeg)")
+                tr("Image (*.jpg *.png *.jpeg *.off)")
                );
 
     if(!filePath.isEmpty()) {
         qDebug() <<filePath;
-        PaintProject* p = new PaintProject();
-        p->setWindowModality(Qt::ApplicationModal);//设置为顶层窗口
-        p->showMaximized();
-        p->loadImage(filePath);  //加载已有的图片
+        if(filePath.contains(".off")) {
+            qDebug() << "Open off";
+            MyGLWidget *w = new MyGLWidget();
+            w->loadOffFile(filePath);
+            w->resize(800,600);
+            w->show();
+        }
+        else {
+            PaintProject* p = new PaintProject();
+            p->setWindowModality(Qt::ApplicationModal);//设置为顶层窗口
+            p->showMaximized();
+            p->loadImage(filePath);  //加载已有的图片
+        }
+
     }
 }
 

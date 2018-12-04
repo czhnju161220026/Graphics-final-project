@@ -5,6 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += opengl
+LIBS     += -lOpengl32 \
+            -lglu32
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -41,7 +44,8 @@ SOURCES += \
     Polygon.cpp \
     rectangle.cpp \
     shape.cpp \
-    Curve.cpp
+    Curve.cpp \
+    Myglwidget.cpp
 
 HEADERS += \
     circle.h \
@@ -61,7 +65,8 @@ HEADERS += \
     Polygon.h \
     rectangle.h \
     shape.h \
-    Curve.h
+    Curve.h \
+    Myglwidget.h
 
 FORMS += \
     drawarea.ui \
