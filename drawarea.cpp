@@ -930,6 +930,12 @@ void DrawArea::addToPixQueue() {
         PixQueue.erase(PixQueue.begin()+1+Pix_index,PixQueue.end());
     PixQueue.push_back(Pix);
     Pix_index++;
+
+    //控制结果队列的长度不会超过20
+    if(PixQueue.size()>=20) {
+        PixQueue.erase(PixQueue.begin());
+        Pix_index--;
+    }
     changeHappen();//提示paintProject有未保存的改变发生了
 
 }
