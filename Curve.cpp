@@ -52,21 +52,14 @@ void Curve::draw(QPen &pen, QPixmap &Pix) {
     qDebug() <<"Draw curve";
     QPainter painter(&Pix);
     painter.setPen(pen);
-
+    //只有一个点，直接绘制
     if(controlPoints.size()==1) {
         painter.drawPoint(controlPoints[0]);
         return;
     }
-/*
-    if(controlPoints.size()<=3) {
-        for(int i = 0;i < controlPoints.size()-1;i++) {
-            painter.drawLine(controlPoints[i],controlPoints[i+1]);
-        }
-        return ;
-    }*/
-
-    //点数大于四，需要进行曲线生成绘制
+    //进行曲线绘制
     for(int i = 0;i < controlPoints.size()-1;i++) {
+        //计算第i段的插值函数
         updateFunction(i);
         int delta_x = controlPoints[i].x() - controlPoints[i+1].y();
         int delta_y = controlPoints[i].y() - controlPoints[i+1].y();

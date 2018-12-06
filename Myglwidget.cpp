@@ -123,7 +123,7 @@ void MyGLWidget::paintGL()                              //从这里开始进行�
     //绘制每个面
     for(int i = 0;i < faces.size();i++) {
         if(i%2==0) {
-            glColor3f(0.7f,0.7f,0.7f);
+            glColor3f(0.8f,0.8f,0.8f);
         }
         else {
             glColor3f(0.6f,0.6f,0.6f);
