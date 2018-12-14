@@ -122,11 +122,26 @@ void MyGLWidget::paintGL()                              //从这里开始进行�
 
     //绘制每个面
     for(int i = 0;i < faces.size();i++) {
-        if(i%2==0) {
-            glColor3f(0.8f,0.8f,0.8f);
-        }
-        else {
+        //TODO: 更改颜色，增强显示效果
+        int colorIndex = i%5;
+        switch (colorIndex) {
+        case 0:
             glColor3f(0.6f,0.6f,0.6f);
+            break;
+        case 1:
+            glColor3f(0.7f,0.7f,0.7f);
+            break;
+        case 2:
+            glColor3f(0.8f,0.8f,0.8f);
+            break;
+        case 3:
+            glColor3f(0.9f,0.9f,0.9f);
+            break;
+        case 4:
+            glColor3f(0.5f,0.5f,0.5f);
+            break;
+        default:
+            break;
         }
 
         glBegin(GL_POLYGON);
