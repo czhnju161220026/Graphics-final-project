@@ -760,6 +760,12 @@ void DrawArea::getPenAttribute(int &penWidth, int &edgeStyle, int& rubberSize) {
 //开启直线绘制模式
 void DrawArea::draw_Line(bool flag) {
     isDrawingLine=flag;
+    if(flag) {
+        if(currentShape!=NULL) {
+            hideAuxilaryPoints();
+        }
+        currentShape = NULL;
+    }
 }
 //重载：通过参数绘制直线
 void DrawArea::draw_Line(QPoint startPoint, QPoint endPoint) {
@@ -775,6 +781,12 @@ void DrawArea::draw_Line(QPoint startPoint, QPoint endPoint) {
 //开启圆绘制模式
 void DrawArea::draw_Circle(bool flag) {
     isDrawingCircle=flag;
+    if(flag) {
+        if(currentShape!=NULL) {
+            hideAuxilaryPoints();
+        }
+        currentShape = NULL;
+    }
 }
 //重载：通过参数绘制圆
 void DrawArea::draw_Circle(int radius, QPoint center) {
@@ -791,6 +803,10 @@ void DrawArea::draw_Rectangle(bool flag) {
     isDrawingRectangle = flag;
     if(flag) {
         qDebug() <<"draw rec";
+        if(currentShape!=NULL) {
+            hideAuxilaryPoints();
+        }
+        currentShape = NULL;
     }
     else {
         qDebug() <<"quit draw res";
@@ -812,6 +828,10 @@ void DrawArea::draw_Oval(bool flag) {
     isDrawingOval = flag;
     if(flag) {
         qDebug() <<"draw Oval";
+        if(currentShape!=NULL) {
+            hideAuxilaryPoints();
+        }
+        currentShape = NULL;
     }
     else {
         qDebug() <<"quit Oval";
@@ -833,6 +853,10 @@ void DrawArea::draw_Polygon(bool flag) {
     isDrawPolygon = flag;
     if(flag) {
         qDebug() <<"draw polygon";
+        if(currentShape!=NULL) {
+            hideAuxilaryPoints();
+        }
+        currentShape = NULL;
     }
     else {
         qDebug() <<"quit Polygon";
@@ -843,6 +867,10 @@ void DrawArea::draw_Curve(bool flag) {
     isDrawCurve = flag;
     if(flag) {
         qDebug() <<"draw Curve";
+        if(currentShape!=NULL) {
+            hideAuxilaryPoints();
+        }
+        currentShape = NULL;
     }
     else {
         qDebug() <<"quit Curve";

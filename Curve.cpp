@@ -6,10 +6,14 @@
 #include <QPainter>
 
 /*
-* 使用Cardinal样条法生成插值函数
+* Cardinal样条法生成插值函数
 * 张量参数t=0.5
 * 又称为Catmull曲线
+*
+* 贝塞尔样条曲线
 */
+
+int Curve::type = 0;
 
 Curve::Curve() {
     attribute = CURVE;
@@ -33,10 +37,17 @@ Curve::Curve(QVector<QPoint> points) {
      initConner();
 }
 
+void Curve::setType(int curveType) {
+    Curve::type = curveType;
+}
+
 void Curve::addNextPoint(QPoint point, QPen &pen, QPixmap &Pix) {
     qDebug() <<"add point "<<point;
     this->controlPoints.push_back(point);
     auxilaryPoints.push_back(point);
+    if(type == 1) {
+        updateCn();
+    }
 }
 
 void Curve::finish(QPen& pen,QPixmap& Pix) {
@@ -49,7 +60,7 @@ bool Curve::isFinished() {
 }
 
 void Curve::draw(QPen &pen, QPixmap &Pix) {
-    qDebug() <<"Draw curve";
+    qDebug() <<"Draw curve:"<<type;
     QPainter painter(&Pix);
     painter.setPen(pen);
     //只有一个点，直接绘制
@@ -57,24 +68,37 @@ void Curve::draw(QPen &pen, QPixmap &Pix) {
         painter.drawPoint(controlPoints[0]);
         return;
     }
-    //进行曲线绘制
-    for(int i = 0;i < controlPoints.size()-1;i++) {
-        //计算第i段的插值函数
-        updateFunction(i);
-        int delta_x = controlPoints[i].x() - controlPoints[i+1].y();
-        int delta_y = controlPoints[i].y() - controlPoints[i+1].y();
-        double length = sqrt(delta_x * delta_x + delta_y * delta_y);
-        float delta_u = 0.5 / length;         //计算U自增的步长
-        QVector<QPoint> points;
-        float u = 0.0;
-        while(u<1.0) {
-            QPoint point(Fx(u),Fy(u));
-            points.push_back(point);
-            u+=delta_u;
+    //进行Cardinal曲线绘制
+    if(type == 0) {
+        for(int i = 0;i < controlPoints.size()-1;i++) {
+            //计算第i段的插值函数
+            updateFunction(i);
+            int delta_x = controlPoints[i].x() - controlPoints[i+1].y();
+            int delta_y = controlPoints[i].y() - controlPoints[i+1].y();
+            double length = sqrt(delta_x * delta_x + delta_y * delta_y);
+            float delta_u = 0.5 / length;         //计算U自增的步长
+            QVector<QPoint> points;
+            float u = 0.0;
+            while(u<1.0) {
+                QPoint point(Fx(u),Fy(u));
+                points.push_back(point);
+                u+=delta_u;
+            }
+            points.push_back(QPoint(Fx(1),Fy(1)));
+            for(int j = 0;j < points.size()-1; j++) {
+                painter.drawLine(points[j],points[j+1]);
+            }
         }
-        points.push_back(QPoint(Fx(1),Fy(1)));
-        for(int j = 0;j < points.size()-1; j++) {
-            painter.drawLine(points[j],points[j+1]);
+    }
+    else if(type == 1) {
+        float u = 0;
+        QVector<QPoint> points;
+        while(u <= 1) {
+            points.push_back(getPoint(u));
+            u += 0.0005;
+        }
+        for(int i = 0;i < points.size()-1;i++) {
+            painter.drawLine(points[i],points[i+1]);
         }
     }
 
@@ -250,4 +274,44 @@ void Curve::initMatrix() {
     Matrix[1][0] =2*t;Matrix[1][1] = t - 3; Matrix[1][2] = 3-2*t; Matrix[1][3] = -t;
     Matrix[2][0] = -t;Matrix[2][1] = 0    ; Matrix[2][2] = t    ; Matrix[2][3] = 0;
     Matrix[3][0] = 0 ;Matrix[3][1] = 1    ; Matrix[3][2] = 0    ; Matrix[3][3] = 0;
+}
+
+//更新组合数数值
+void Curve::updateCn() {
+    int n = controlPoints.size()-1;
+    Cn.erase(Cn.begin(),Cn.end());
+    for(int i = 0;i <= n;i++) {
+        int res = 1;
+        for(int j = i+1;j <= n;j++) {
+            res *= j;
+        }
+        for(int j = 1;j <= n-i;j++) {
+            res /= j;
+        }
+        Cn.push_back(res);
+    }
+}
+//根据U值计算贝塞尔曲线的点
+QPoint Curve::getPoint(float u) {
+    float x = 0,y=0;
+    int n = Cn.size()-1;
+    for(int i = 0;i <= n;i++) {
+        float Bezn_i = Cn[i] * pow(u,i) * pow(1-u,n-i);
+        x += Bezn_i * controlPoints[i].x();
+        y += Bezn_i * controlPoints[i].y();
+    }
+    return  QPoint((int)x,(int)y);
+}
+
+void Curve::showAuxilaryPoints(QPixmap& pix) {
+    Shape::showAuxilaryPoints(pix);
+    if(type == 1) {
+        QPen pen;
+        pen.setStyle(Qt::DashLine);
+        QPainter paint(&pix);
+        paint.setPen(pen);
+        for(int i = 0;i < auxilaryPoints.size()-1;i++) {
+            paint.drawLine(auxilaryPoints[i],auxilaryPoints[i+1]);
+        }
+    }
 }

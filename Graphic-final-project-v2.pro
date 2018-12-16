@@ -45,7 +45,8 @@ SOURCES += \
     rectangle.cpp \
     shape.cpp \
     Curve.cpp \
-    Myglwidget.cpp
+    Myglwidget.cpp \
+    setcurve.cpp
 
 HEADERS += \
     circle.h \
@@ -66,7 +67,8 @@ HEADERS += \
     rectangle.h \
     shape.h \
     Curve.h \
-    Myglwidget.h
+    Myglwidget.h \
+    setcurve.h
 
 FORMS += \
     drawarea.ui \
@@ -77,7 +79,8 @@ FORMS += \
     inputrectangle.ui \
     mainwindow.ui \
     paintproject.ui \
-    penAttribute.ui
+    penAttribute.ui \
+    setcurve.ui
 
 RESOURCES += \
     qrf1.qrc

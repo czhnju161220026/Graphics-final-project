@@ -7,6 +7,8 @@
 #include "inputrectangle.h"
 #include "inputoval.h"
 #include "shape.h"
+#include "Curve.h"
+#include "setcurve.h"
 #include <QChar>
 
 
@@ -384,8 +386,13 @@ void PaintProject::draw_Polygon() {
 void PaintProject::draw_Curve() {
     if(!isDrawingCurve) {
         quitAllFunctions();
+        SetCurve *setDialog = new SetCurve(this);
+        setDialog->exec();
+        int type = setDialog->getType();
+        qDebug() << "曲线种类:"<<type;
         drawArea->draw_Curve(true);
         isDrawingCurve = true;
+        Curve::setType(type);
     }
     else {
         drawArea->draw_Curve(false);
