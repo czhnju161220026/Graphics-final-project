@@ -279,24 +279,34 @@ void Curve::initMatrix() {
 //更新组合数数值
 void Curve::updateCn() {
     int n = controlPoints.size()-1;
-    Cn.erase(Cn.begin(),Cn.end());
-    for(int i = 0;i <= n;i++) {
-        int res = 1;
-        for(int j = i+1;j <= n;j++) {
-            res *= j;
+    if(n==0) {
+        QVector<int> temp;
+        temp.append(1);
+        C.append(temp);
+    }
+    else if(n == 1) {
+        QVector<int> temp;
+        temp.append(1);
+        temp.append(1);
+        C.append(temp);
+    }
+    else {
+        QVector<int> temp;
+        QVector<int> Cn_1 = C[n-1];
+        temp.append(1);
+        for(int i = 0;i < Cn_1.size()-1;i++) {
+            temp.append(Cn_1[i] + Cn_1[i + 1]);
         }
-        for(int j = 1;j <= n-i;j++) {
-            res /= j;
-        }
-        Cn.push_back(res);
+        temp.append(1);
+        C.append(temp);
     }
 }
 //根据U值计算贝塞尔曲线的点
 QPoint Curve::getPoint(float u) {
     float x = 0,y=0;
-    int n = Cn.size()-1;
+    int n = controlPoints.size()-1;
     for(int i = 0;i <= n;i++) {
-        float Bezn_i = Cn[i] * pow(u,i) * pow(1-u,n-i);
+        float Bezn_i = C[n][i] * pow(u,i) * pow(1-u,n-i);
         x += Bezn_i * controlPoints[i].x();
         y += Bezn_i * controlPoints[i].y();
     }

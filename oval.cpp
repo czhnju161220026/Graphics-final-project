@@ -214,12 +214,11 @@ void Oval::addRotateDegrees(int degrees) {
 void Oval::zoom(double ratio) {
     a*=ratio;
     b*=ratio;
-
     for(int i = 0;i<auxilaryPoints.size();i++) {
         int oldX = auxilaryPoints[i].x();
         int oldY = auxilaryPoints[i].y();
-        auxilaryPoints[i].setX(center.x() + ratio*(oldX - center.x()));
-        auxilaryPoints[i].setY(center.y() + ratio*(oldY - center.y()));
+        auxilaryPoints[i].setX(center.x() + ratio*(double)(oldX - center.x()));
+        auxilaryPoints[i].setY(center.y() + ratio*(double)(oldY - center.y()));
     }
 }
 

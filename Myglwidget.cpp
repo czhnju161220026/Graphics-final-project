@@ -108,7 +108,6 @@ void MyGLWidget::paintGL()                              //从这里开始进行�
     glLoadIdentity();                                   //重置当前的模型观察矩阵
 
     glTranslatef(0.0, 0.0f, (GLfloat)distance);                   //坐标系移入屏幕4.0单位
-    //glRotatef(angle,0.5f,1.0f,0.0f);
     int delta_x = currentPoint.x() - lastPoint.x();
     int delta_y = currentPoint.y() - lastPoint.y();
     lastPoint = currentPoint;

@@ -66,7 +66,6 @@ void MainWindow::openFile() {
             p->showMaximized();
             p->loadImage(filePath);  //加载已有的图片
         }
-
     }
 }
 

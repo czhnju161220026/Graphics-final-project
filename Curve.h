@@ -29,7 +29,7 @@ private:
     float Ay,By,Cy,Dy;  //函数系数
     float Matrix[4][4];//Cardinal 矩阵
     /*贝塞尔曲线的变量*/
-    QVector<int> Cn;
+    QVector<QVector<int>> C;
     void initMatrix();
     void initConner();
 public:
